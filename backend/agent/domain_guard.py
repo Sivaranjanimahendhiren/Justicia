@@ -26,10 +26,12 @@ CATEGORY_KEYWORDS = {
         "jeweller", "gold", "e-commerce", "amazon", "flipkart", "deficiency"
     ],
     "Financial Disputes": [
-        "cheque bounce", "loan", "emi", "bank", "interest", "salary unpaid",
-        "wages", "pf", "provident fund", "chit fund", "ponzi", "investment fraud",
-        "mutual fund", "fixed deposit", "fd", "tds", "credit card", "recovery",
-        "money lent", "debt", "non-payment", "ni act", "negotiable instruments"
+        "cheque bounce", "cheque", "bounce", "bounced", "dishonour", "loan", "emi",
+        "bank", "interest", "salary unpaid", "wages", "pf", "provident fund",
+        "chit fund", "ponzi", "investment fraud", "mutual fund", "fixed deposit",
+        "fd", "tds", "credit card", "recovery", "money lent", "debt",
+        "non-payment", "ni act", "negotiable instruments", "repay", "borrow",
+        "lend", "lent", "borrowed", "money back", "refund money"
     ],
     "Property & RERA Issues": [
         "builder", "flat", "possession", "rera", "apartment", "property",
@@ -105,11 +107,13 @@ def detect_category(query: str) -> str:
 def is_legal_query(query: str) -> bool:
     """Returns True if query is a valid Indian legal matter."""
     query_lower = query.lower()
-    # Accept if any legal keyword matches
     if any(kw in query_lower for kw in ALL_LEGAL_KEYWORDS):
         return True
-    # Also accept if query is a question about rights/law
-    question_words = ["how", "what", "can i", "should i", "is it", "help", "advice", "legal"]
+    # Accept general help/question queries
+    question_words = ["how", "what", "can i", "should i", "is it", "help",
+                      "advice", "legal", "my problem", "i want to", "i need",
+                      "what to do", "rights", "complaint", "case", "court",
+                      "police", "lawyer", "advocate", "file", "sue"]
     return any(q in query_lower for q in question_words)
 
 

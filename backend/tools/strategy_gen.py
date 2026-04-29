@@ -39,42 +39,41 @@ class StrategyGenOutput(BaseModel):
     structured_court_argument: CourtArgument
 
 
-SYSTEM_PROMPT = """You are JUSTICIA, an AI legal assistant specializing in Indian real estate disputes under RERA Act.
-Generate structured, factual, court-ready legal strategies. 
-Always cite specific RERA sections (Section 18, 19, 31) and relevant case law.
+SYSTEM_PROMPT = """You are JUSTICIA, an AI legal assistant specializing in Indian law across all categories:
+Family Law, Domestic Violence, Consumer Complaints, Financial Disputes, Property/RERA,
+Employment, Cyber Crimes, Criminal matters, Civil Disputes, and General Legal Advice.
+Generate structured, factual, court-ready legal strategies citing specific Indian law sections.
 Never guarantee outcomes. Always include a disclaimer.
 Output must be valid JSON matching the CourtArgument schema."""
 
 
 def strategy_gen(inp: StrategyGenInput) -> StrategyGenOutput:
+    # Use category-aware builder (works without OpenAI key in dev)
+    try:
+        from agent.domain_guard import detect_category
+        from agent.strategy_builder import get_strategy_for_query
+        category = detect_category(inp.case_summary)
+        raw = get_strategy_for_query(inp.case_summary, category, {})
+        argument = CourtArgument(**raw)
+        return StrategyGenOutput(structured_court_argument=argument)
+    except Exception:
+        pass
+
+    # Fallback: real OpenAI call
     ethical_note = ""
     if inp.ethical_issues_to_fix:
-        ethical_note = f"\n\nIMPORTANT — Fix these ethical issues in your output: {json.dumps([e if isinstance(e, dict) else e.dict() for e in inp.ethical_issues_to_fix])}"
+        ethical_note = f"\n\nFix these issues: {json.dumps([e if isinstance(e, dict) else e.model_dump() for e in inp.ethical_issues_to_fix])}"
 
-    user_prompt = f"""Generate a legal strategy for this RERA delayed possession case:
+    user_prompt = f"""Generate a legal strategy for this Indian law case:
 
 Case Summary: {inp.case_summary}
-Detected Conflicts: {json.dumps([c if isinstance(c, dict) else c.dict() for c in inp.conflict_list])}
-Missing Documents: {json.dumps([m if isinstance(m, dict) else m.dict() for m in inp.missing_documents])}
-Relevant Precedents: {json.dumps([r if isinstance(r, dict) else r.dict() for r in inp.ranked_cases])}
-Applicable Statutes: {json.dumps([s if isinstance(s, dict) else s.dict() for s in inp.applicable_statutes])}
-Risk Score: {inp.risk_score}/100
 Client Goal: {inp.client_desired_outcome}
+Risk Score: {inp.risk_score}/100
 {ethical_note}
 
-Return a JSON object with these exact keys:
-{{
-  "case_summary": "...",
-  "applicable_acts_sections": ["RERA Section 18 — ...", "RERA Section 19 — ..."],
-  "legal_grounds": ["Ground 1: ...", "Ground 2: ..."],
-  "evidence_strategy": "...",
-  "precedent_arguments": ["Precedent 1: ...", "Precedent 2: ..."],
-  "compensation_calculation": "...",
-  "recommended_relief": "...",
-  "risk_assessment": "...",
-  "immediate_action_items": ["Step 1: ...", "Step 2: ..."],
-  "disclaimer": "This is AI-assisted legal analysis, not legal advice. Consult a qualified advocate before taking any legal action."
-}}"""
+Return JSON with keys: case_summary, applicable_acts_sections (list), legal_grounds (list),
+evidence_strategy, precedent_arguments (list), compensation_calculation,
+recommended_relief, risk_assessment, immediate_action_items (list), disclaimer."""
 
     response = client.chat.completions.create(
         model="gpt-4o",
@@ -85,7 +84,6 @@ Return a JSON object with these exact keys:
         response_format={"type": "json_object"},
         temperature=0.3
     )
-
     raw = json.loads(response.choices[0].message.content)
     argument = CourtArgument(**raw)
     return StrategyGenOutput(structured_court_argument=argument)

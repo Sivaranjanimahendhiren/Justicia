@@ -1,0 +1,111 @@
+{
+  "webhook_name": "Justicia-Backend-Webhook",
+  "description": "Connects Kore.ai Service Nodes to Justicia FastAPI tool endpoints",
+  "base_url": "http://localhost:8000/api/v1",
+  "auth": {
+    "type": "bearer",
+    "token_env_var": "JUSTICIA_API_KEY"
+  },
+  "tool_endpoints": [
+    {
+      "tool_id": "TOOL-001",
+      "name": "Juris-Sync",
+      "method": "POST",
+      "path": "/tools/juris-sync",
+      "koreai_node": "Service Node — Juris-Sync",
+      "request_mapping": {
+        "topic": "{{context.session.BotUserSession.topic}}",
+        "jurisdiction": "{{context.session.BotUserSession.jurisdiction}}",
+        "year_from": 2016
+      },
+      "response_mapping": {
+        "applicable_statutes": "{{serviceResult.legal_text}}"
+      }
+    },
+    {
+      "tool_id": "TOOL-002",
+      "name": "Fact-Conflict",
+      "method": "POST",
+      "path": "/tools/fact-conflict",
+      "koreai_node": "Service Node — Fact-Conflict",
+      "request_mapping": {
+        "client_statement": "{{context.session.BotUserSession.client_statement}}",
+        "retrieved_facts": "{{context.session.BotUserSession.retrieved_facts}}"
+      },
+      "response_mapping": {
+        "conflict_list": "{{serviceResult.conflict_list}}",
+        "risk_score": "{{serviceResult.risk_score}}"
+      }
+    },
+    {
+      "tool_id": "TOOL-003",
+      "name": "Gap-Detector",
+      "method": "POST",
+      "path": "/tools/gap-detector",
+      "koreai_node": "Service Node — Gap-Detector",
+      "request_mapping": {
+        "provided_documents": "{{context.session.BotUserSession.provided_documents}}",
+        "checklist_id": "JUSTICIA-RERA-CHECKLIST-v1"
+      },
+      "response_mapping": {
+        "missing_documents": "{{serviceResult.missing_documents}}",
+        "completeness_score": "{{serviceResult.completeness_score}}",
+        "case_readiness": "{{serviceResult.case_readiness}}"
+      }
+    },
+    {
+      "tool_id": "TOOL-004",
+      "name": "Precedent-Ranker",
+      "method": "POST",
+      "path": "/tools/precedent-ranker",
+      "koreai_node": "Service Node — Precedent-Ranker",
+      "request_mapping": {
+        "case_summary": "{{context.session.BotUserSession.case_summary}}",
+        "key_factors": "{{context.session.BotUserSession.key_factors}}",
+        "top_n": 3
+      },
+      "response_mapping": {
+        "ranked_cases": "{{serviceResult.ranked_cases}}"
+      }
+    },
+    {
+      "tool_id": "TOOL-005",
+      "name": "Ethical-Guard",
+      "method": "POST",
+      "path": "/tools/ethical-guard",
+      "koreai_node": "Service Node — Ethical-Guard",
+      "request_mapping": {
+        "strategy_draft": "{{context.session.BotUserSession.strategy_draft}}",
+        "case_facts": "{{context.session.BotUserSession.case_facts}}"
+      },
+      "response_mapping": {
+        "compliance_flag": "{{serviceResult.compliance_flag}}",
+        "approved_for_output": "{{serviceResult.approved_for_output}}"
+      }
+    },
+    {
+      "tool_id": "TOOL-006",
+      "name": "Strategy-Gen",
+      "method": "POST",
+      "path": "/tools/strategy-gen",
+      "koreai_node": "GenAI Node — Strategy-Gen",
+      "request_mapping": {
+        "case_summary": "{{context.session.BotUserSession.case_summary}}",
+        "conflict_list": "{{context.session.BotUserSession.conflict_list}}",
+        "missing_documents": "{{context.session.BotUserSession.missing_documents}}",
+        "ranked_cases": "{{context.session.BotUserSession.ranked_cases}}",
+        "applicable_statutes": "{{context.session.BotUserSession.applicable_statutes}}",
+        "risk_score": "{{context.session.BotUserSession.risk_score}}",
+        "client_desired_outcome": "{{context.session.BotUserSession.client_desired_outcome}}"
+      },
+      "response_mapping": {
+        "strategy_draft": "{{serviceResult.structured_court_argument}}"
+      }
+    }
+  ],
+  "chat_endpoint": {
+    "method": "POST",
+    "path": "/chat",
+    "description": "Single endpoint for full agent loop — use for Kore.ai webhook channel integration"
+  }
+}

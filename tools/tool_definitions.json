@@ -1,0 +1,302 @@
+{
+  "tools": [
+    {
+      "tool_id": "TOOL-001",
+      "name": "Juris-Sync",
+      "type": "API Tool (Service Node)",
+      "description": "Fetches updated statutory law text relevant to the legal topic provided. Simulates a live legal database API.",
+      "koreai_node_type": "Service Node",
+      "endpoint_simulation": "GET /api/legal/statutes?topic={topic}&jurisdiction={jurisdiction}",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "topic": {
+            "type": "string",
+            "description": "Legal topic to fetch rules for",
+            "example": "delayed possession RERA"
+          },
+          "jurisdiction": {
+            "type": "string",
+            "description": "State or national jurisdiction",
+            "example": "Maharashtra"
+          },
+          "year_from": {
+            "type": "integer",
+            "description": "Filter laws enacted from this year",
+            "example": 2016
+          }
+        },
+        "required": ["topic", "jurisdiction"]
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "legal_text": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "section": { "type": "string" },
+                "title": { "type": "string" },
+                "content": { "type": "string" },
+                "effective_date": { "type": "string" }
+              }
+            }
+          },
+          "source": { "type": "string" },
+          "last_updated": { "type": "string" }
+        }
+      },
+      "sample_logic": "def juris_sync(topic, jurisdiction, year_from=2016):\n    # Query Knowledge AI for statutory_rules.md chunks matching topic\n    results = knowledge_ai.search(query=topic, collection='Justicia-Legal-KB', filters={'source': 'statutory_rules', 'year_gte': year_from})\n    return {\n        'legal_text': [{'section': r.metadata.section, 'title': r.metadata.title, 'content': r.content} for r in results],\n        'source': 'Justicia-Legal-KB / statutory_rules.md',\n        'last_updated': '2026-04-01'\n    }"
+    },
+    {
+      "tool_id": "TOOL-002",
+      "name": "Fact-Conflict",
+      "type": "Logic Tool (Script Node)",
+      "description": "Compares client's statement against retrieved facts and documents to detect contradictions. Outputs conflict list and risk score.",
+      "koreai_node_type": "Script Node",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "client_statement": {
+            "type": "object",
+            "description": "Structured client statement fields",
+            "properties": {
+              "claimed_payment_date": { "type": "string" },
+              "claimed_amount_paid": { "type": "number" },
+              "claimed_possession_date": { "type": "string" },
+              "documents_claimed": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "retrieved_facts": {
+            "type": "object",
+            "description": "Facts extracted from documents and Knowledge AI",
+            "properties": {
+              "receipt_payment_date": { "type": "string" },
+              "receipt_amount": { "type": "number" },
+              "agreement_possession_date": { "type": "string" },
+              "documents_verified": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "required": ["client_statement", "retrieved_facts"]
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "conflict_list": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "field": { "type": "string" },
+                "client_value": { "type": "string" },
+                "document_value": { "type": "string" },
+                "severity": { "type": "string", "enum": ["low", "medium", "high"] },
+                "recommendation": { "type": "string" }
+              }
+            }
+          },
+          "risk_score": {
+            "type": "number",
+            "description": "0-100 risk score. Higher = more contradictions / weaker case",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "overall_assessment": { "type": "string" }
+        }
+      },
+      "sample_logic": "def fact_conflict(client_statement, retrieved_facts):\n    conflicts = []\n    risk = 0\n\n    # Check payment date\n    if client_statement['claimed_payment_date'] != retrieved_facts['receipt_payment_date']:\n        conflicts.append({\n            'field': 'final_payment_date',\n            'client_value': client_statement['claimed_payment_date'],\n            'document_value': retrieved_facts['receipt_payment_date'],\n            'severity': 'medium',\n            'recommendation': 'Clarify date discrepancy in complaint. Use receipt date as authoritative.'\n        })\n        risk += 25\n\n    # Check amount\n    if client_statement['claimed_amount_paid'] != retrieved_facts['receipt_amount']:\n        conflicts.append({'field': 'total_amount', 'severity': 'high', ...})\n        risk += 40\n\n    return {'conflict_list': conflicts, 'risk_score': min(risk, 100), 'overall_assessment': 'Medium Risk' if risk < 50 else 'High Risk'}"
+    },
+    {
+      "tool_id": "TOOL-003",
+      "name": "Gap-Detector",
+      "type": "Audit Tool (Script Node)",
+      "description": "Compares documents provided by client against the mandatory evidence checklist. Outputs list of missing documents.",
+      "koreai_node_type": "Script Node",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "provided_documents": {
+            "type": "array",
+            "description": "List of document types the client has provided",
+            "items": { "type": "string" },
+            "example": ["Sale Agreement", "Payment Receipts", "Builder Communication Logs"]
+          },
+          "checklist_id": {
+            "type": "string",
+            "description": "ID of the checklist to validate against",
+            "example": "JUSTICIA-RERA-CHECKLIST-v1"
+          }
+        },
+        "required": ["provided_documents", "checklist_id"]
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "missing_documents": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "doc_id": { "type": "string" },
+                "document_type": { "type": "string" },
+                "mandatory": { "type": "boolean" },
+                "how_to_obtain": { "type": "string" }
+              }
+            }
+          },
+          "completeness_score": {
+            "type": "number",
+            "description": "Percentage of mandatory documents provided",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "case_readiness": {
+            "type": "string",
+            "enum": ["ready", "needs_attention", "not_ready"]
+          }
+        }
+      },
+      "sample_logic": "def gap_detector(provided_documents, checklist_id):\n    checklist = load_checklist(checklist_id)  # loads evidence_checklist.json\n    mandatory = [d for d in checklist['required_documents'] if d['mandatory']]\n    missing = []\n    for doc in mandatory:\n        if doc['document_type'] not in provided_documents:\n            missing.append({\n                'doc_id': doc['doc_id'],\n                'document_type': doc['document_type'],\n                'mandatory': True,\n                'how_to_obtain': get_obtain_instructions(doc['doc_id'])\n            })\n    score = ((len(mandatory) - len(missing)) / len(mandatory)) * 100\n    readiness = 'ready' if score == 100 else ('needs_attention' if score >= 70 else 'not_ready')\n    return {'missing_documents': missing, 'completeness_score': score, 'case_readiness': readiness}"
+    },
+    {
+      "tool_id": "TOOL-004",
+      "name": "Precedent-Ranker",
+      "type": "Ranking Tool (Service Node + Script Node)",
+      "description": "Ranks case law precedents by relevance to the current case using semantic similarity and factual matching.",
+      "koreai_node_type": "Service Node (Knowledge AI) + Script Node (ranking logic)",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "case_summary": {
+            "type": "string",
+            "description": "Brief summary of current case facts",
+            "example": "Buyer paid full amount, builder delayed possession by 28 months in Maharashtra"
+          },
+          "key_factors": {
+            "type": "array",
+            "items": { "type": "string" },
+            "example": ["delayed possession", "full payment made", "Maharashtra", "RERA"]
+          },
+          "top_n": {
+            "type": "integer",
+            "description": "Number of top precedents to return",
+            "default": 3
+          }
+        },
+        "required": ["case_summary"]
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "ranked_cases": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "rank": { "type": "integer" },
+                "case_name": { "type": "string" },
+                "forum": { "type": "string" },
+                "year": { "type": "integer" },
+                "relevance_score": { "type": "number" },
+                "key_principle": { "type": "string" },
+                "applicable_to_current_case": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "sample_logic": "def precedent_ranker(case_summary, key_factors, top_n=3):\n    # Semantic search in Knowledge AI for case_precedents.md\n    results = knowledge_ai.search(query=case_summary, collection='Justicia-Legal-KB', filters={'source': 'case_precedents'}, top_k=10)\n    # Score each result by factor overlap\n    scored = []\n    for r in results:\n        factor_score = sum(1 for f in key_factors if f.lower() in r.content.lower())\n        total_score = (r.semantic_score * 0.6) + (factor_score / len(key_factors) * 0.4)\n        scored.append({**r.metadata, 'relevance_score': round(total_score, 2)})\n    ranked = sorted(scored, key=lambda x: x['relevance_score'], reverse=True)[:top_n]\n    return {'ranked_cases': [{'rank': i+1, **c} for i, c in enumerate(ranked)]}"
+    },
+    {
+      "tool_id": "TOOL-005",
+      "name": "Ethical-Guard",
+      "type": "Compliance Tool (Script Node)",
+      "description": "Validates that the generated legal strategy is neutral, factually grounded, and does not contain biased, harmful, or legally irresponsible content.",
+      "koreai_node_type": "Script Node",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "strategy_draft": {
+            "type": "string",
+            "description": "Draft legal strategy text to be validated"
+          },
+          "case_facts": {
+            "type": "object",
+            "description": "Verified case facts for grounding check"
+          }
+        },
+        "required": ["strategy_draft", "case_facts"]
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "compliance_flag": {
+            "type": "string",
+            "enum": ["PASS", "FAIL", "REVIEW"]
+          },
+          "issues_found": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "issue_type": { "type": "string" },
+                "description": { "type": "string" },
+                "severity": { "type": "string" }
+              }
+            }
+          },
+          "neutrality_score": {
+            "type": "number",
+            "description": "0-100. Higher = more neutral and balanced",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "approved_for_output": { "type": "boolean" }
+        }
+      },
+      "sample_logic": "def ethical_guard(strategy_draft, case_facts):\n    issues = []\n    score = 100\n\n    # Check for ungrounded claims\n    if 'guaranteed win' in strategy_draft.lower() or 'certain victory' in strategy_draft.lower():\n        issues.append({'issue_type': 'overconfidence', 'description': 'Strategy makes outcome guarantees', 'severity': 'high'})\n        score -= 30\n\n    # Check for bias against builder without evidence\n    if 'fraud' in strategy_draft.lower() and 'fraud' not in str(case_facts).lower():\n        issues.append({'issue_type': 'ungrounded_allegation', 'description': 'Fraud alleged without factual basis', 'severity': 'high'})\n        score -= 40\n\n    # Check for missing disclaimer\n    if 'not legal advice' not in strategy_draft.lower():\n        issues.append({'issue_type': 'missing_disclaimer', 'description': 'Legal disclaimer absent', 'severity': 'medium'})\n        score -= 10\n\n    flag = 'PASS' if score >= 70 else ('REVIEW' if score >= 50 else 'FAIL')\n    return {'compliance_flag': flag, 'issues_found': issues, 'neutrality_score': score, 'approved_for_output': score >= 70}"
+    },
+    {
+      "tool_id": "TOOL-006",
+      "name": "Strategy-Gen",
+      "type": "Output Tool (GenAI Node)",
+      "description": "Generates a structured court-ready legal strategy using all verified inputs: conflicts, gaps, precedents, and statutory rules.",
+      "koreai_node_type": "GenAI Node (LLM with structured prompt)",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "case_summary": { "type": "string" },
+          "conflict_list": { "type": "array" },
+          "missing_documents": { "type": "array" },
+          "ranked_cases": { "type": "array" },
+          "applicable_statutes": { "type": "array" },
+          "risk_score": { "type": "number" },
+          "client_desired_outcome": { "type": "string" }
+        },
+        "required": ["case_summary", "conflict_list", "missing_documents", "ranked_cases", "applicable_statutes"]
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "structured_court_argument": {
+            "type": "object",
+            "properties": {
+              "case_summary": { "type": "string" },
+              "legal_grounds": { "type": "array", "items": { "type": "string" } },
+              "evidence_strategy": { "type": "string" },
+              "precedent_arguments": { "type": "array", "items": { "type": "string" } },
+              "compensation_calculation": { "type": "string" },
+              "recommended_relief": { "type": "string" },
+              "risk_assessment": { "type": "string" },
+              "immediate_action_items": { "type": "array", "items": { "type": "string" } },
+              "disclaimer": { "type": "string" }
+            }
+          }
+        }
+      },
+      "prompt_template": "You are JUSTICIA, an AI legal assistant. Based on the following verified case data, generate a structured legal strategy for a RERA delayed possession complaint.\n\nCase Summary: {case_summary}\nDetected Conflicts: {conflict_list}\nMissing Documents: {missing_documents}\nRelevant Precedents: {ranked_cases}\nApplicable Statutes: {applicable_statutes}\nRisk Score: {risk_score}/100\nClient Goal: {client_desired_outcome}\n\nGenerate a structured court argument with: legal grounds, evidence strategy, precedent arguments, compensation calculation, recommended relief, risk assessment, and immediate action items.\n\nIMPORTANT: This is AI-assisted legal analysis, not legal advice. Always recommend consulting a qualified advocate."
+    }
+  ]
+}

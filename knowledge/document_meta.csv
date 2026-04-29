@@ -1,0 +1,19 @@
+doc_id,type,source,date,client_ref,status,mandatory,notes
+DOC-001,Allotment Letter,Client — Original,2019-03-15,CLT-2026-0047,MISSING,true,Client states misplaced
+DOC-002,Sale Agreement,Client — Registered Copy,2019-04-10,CLT-2026-0047,PROVIDED,true,Registered with Sub-Registrar Pune
+DOC-003-A,Payment Receipt — Installment 1,Builder — GVH Receipt,2019-05-01,CLT-2026-0047,PROVIDED,true,Amount: 600000
+DOC-003-B,Payment Receipt — Installment 2,Builder — GVH Receipt,2019-11-15,CLT-2026-0047,PROVIDED,true,Amount: 800000
+DOC-003-C,Payment Receipt — Installment 3,Builder — GVH Receipt,2020-06-20,CLT-2026-0047,PROVIDED,true,Amount: 800000
+DOC-003-D,Payment Receipt — Installment 4,Builder — GVH Receipt,2021-02-10,CLT-2026-0047,PROVIDED,true,Amount: 1000000
+DOC-003-E,Payment Receipt — Installment 5,Builder — GVH Receipt,2022-01-05,CLT-2026-0047,PROVIDED,true,Amount: 1000000
+DOC-003-F,Payment Receipt — Installment 6,Builder — GVH Receipt,2023-03-18,CLT-2026-0047,PROVIDED,true,Amount: 1200000
+DOC-003-G,Payment Receipt — Installment 7,Builder — GVH Receipt,2025-08-22,CLT-2026-0047,MISSING,true,Receipt not provided by client
+DOC-003-H,Payment Receipt — Installment 8 (Final),Builder — GVH Receipt No. GVH-2026-0892,2026-03-14,CLT-2026-0047,PROVIDED,true,Amount: 800000 — DATE CONTRADICTION: Client stated Feb 2026 but receipt shows Mar 2026
+DOC-004-A,Builder Communication Log — Email 1,Client — Email Export,2026-01-15,CLT-2026-0047,PROVIDED,false,Email to builder re possession update — no reply received
+DOC-004-B,Builder Communication Log — Email 2,Client — Email Export,2026-03-02,CLT-2026-0047,PROVIDED,false,Follow-up email — no reply received
+DOC-005,RERA Registration Certificate,MahaRERA Portal,2019-01-20,CLT-2026-0047,NOT_VERIFIED,true,Registration No. MahaRERA/P52100/2019/0341 — needs portal verification
+DOC-006,Bank Statements,Client Bank,2019-2026,CLT-2026-0047,MISSING,true,Not provided by client
+DOC-007,Identity Proof — PAN Card,Client,2015-06-01,CLT-2026-0047,PROVIDED,true,PAN redacted
+DOC-008,Demand Letter from Builder,Builder,2026-02-01,CLT-2026-0047,NOT_PROVIDED,false,Unknown if any demand letters exist
+DOC-009,Possession Letter,Builder,N/A,CLT-2026-0047,NOT_PROVIDED,false,No possession offered as of April 2026
+DOC-010,Home Loan Documents,HDFC Bank,2019-04-15,CLT-2026-0047,NOT_PROVIDED,false,Client mentions home loan — documents not submitted

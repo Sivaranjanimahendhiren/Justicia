@@ -1,0 +1,112 @@
+{
+  "checklist_id": "JUSTICIA-RERA-CHECKLIST-v1",
+  "matter_type": "Delayed Possession — RERA Complaint",
+  "jurisdiction": "India (RERA)",
+  "version": "1.0",
+  "last_updated": "2026-04-01",
+  "required_documents": [
+    {
+      "doc_id": "DOC-001",
+      "document_type": "Allotment Letter",
+      "description": "Original letter issued by builder confirming unit allotment to buyer",
+      "mandatory": true,
+      "acceptable_formats": ["original", "notarized_copy"],
+      "notes": "Must show unit number, floor, tower, allotment date. Builder letterhead required.",
+      "legal_basis": "RERA Section 11(3)(a)",
+      "how_to_obtain": "Request from builder in writing. If refused, file RTI with MahaRERA citing project registration number."
+    },
+    {
+      "doc_id": "DOC-002",
+      "document_type": "Sale Agreement",
+      "description": "Registered Agreement to Sell specifying possession date, total consideration, and payment schedule",
+      "mandatory": true,
+      "acceptable_formats": ["registered_original", "certified_copy"],
+      "notes": "Must be registered with Sub-Registrar. Unregistered agreements have limited evidentiary value.",
+      "legal_basis": "Registration Act 1908, RERA Section 13",
+      "how_to_obtain": "Obtain certified copy from Sub-Registrar office where originally registered."
+    },
+    {
+      "doc_id": "DOC-003",
+      "document_type": "Payment Receipts",
+      "description": "All official receipts issued by builder for each installment payment",
+      "mandatory": true,
+      "acceptable_formats": ["original", "scanned_copy"],
+      "notes": "Must cover ALL installments. Missing receipts must be replaced with bank statements.",
+      "legal_basis": "RERA Section 4(2)(l)(D)",
+      "how_to_obtain": "Request duplicate receipts from builder. Supplement with bank statements showing corresponding debits."
+    },
+    {
+      "doc_id": "DOC-004",
+      "document_type": "Builder Communication Logs",
+      "description": "All written communications between buyer and builder: emails, letters, legal notices",
+      "mandatory": true,
+      "acceptable_formats": ["printed_emails", "courier_receipts", "legal_notice_copies"],
+      "notes": "Include delivery/read receipts. Unanswered communications strengthen buyer's case.",
+      "legal_basis": "Evidence Act 1872, Section 65B (electronic records)",
+      "how_to_obtain": "Export email threads. Send formal legal notice via registered post and retain acknowledgment."
+    },
+    {
+      "doc_id": "DOC-005",
+      "document_type": "RERA Registration Certificate",
+      "description": "Builder's project registration certificate from State RERA Authority",
+      "mandatory": true,
+      "acceptable_formats": ["downloaded_from_rera_portal", "builder_provided_copy"],
+      "notes": "Can be downloaded from state RERA portal using project registration number.",
+      "legal_basis": "RERA Section 3",
+      "how_to_obtain": "Download from https://maharera.mahaonline.gov.in using project RERA number."
+    },
+    {
+      "doc_id": "DOC-006",
+      "document_type": "Bank Statements",
+      "description": "Buyer's bank statements showing all payment transactions to builder",
+      "mandatory": true,
+      "acceptable_formats": ["bank_certified_statement", "net_banking_statement"],
+      "notes": "Required to corroborate payment receipts. Critical if any receipt is missing.",
+      "legal_basis": "Evidence Act 1872, corroborative evidence",
+      "how_to_obtain": "Request certified bank statement from your bank branch covering 2019–2026."
+    },
+    {
+      "doc_id": "DOC-007",
+      "document_type": "Identity Proof",
+      "description": "Government-issued photo ID of the complainant",
+      "mandatory": true,
+      "acceptable_formats": ["aadhaar", "pan_card", "passport"],
+      "notes": "PAN card mandatory if claim amount exceeds ₹10,00,000.",
+      "legal_basis": "RERA complaint filing requirement",
+      "how_to_obtain": "Self-attested copy of Aadhaar and PAN card."
+    },
+    {
+      "doc_id": "DOC-008",
+      "document_type": "Demand Letters from Builder",
+      "description": "Any payment demand notices sent by builder to buyer",
+      "mandatory": false,
+      "acceptable_formats": ["original", "scanned_copy"],
+      "notes": "Important if builder claims buyer defaulted. Dates of demand letters are critical.",
+      "legal_basis": "Corroborative / defensive evidence",
+      "how_to_obtain": "Retrieve from personal records. Check registered post receipts."
+    },
+    {
+      "doc_id": "DOC-009",
+      "document_type": "Possession Letter / Offer of Possession",
+      "description": "Any letter from builder offering possession (even if delayed)",
+      "mandatory": false,
+      "acceptable_formats": ["original", "scanned_copy"],
+      "notes": "If possession has been offered but not accepted, this document is critical.",
+      "legal_basis": "RERA Section 18",
+      "how_to_obtain": "Retrieve from personal records or builder's office."
+    },
+    {
+      "doc_id": "DOC-010",
+      "document_type": "Home Loan Documents",
+      "description": "Loan sanction letter and EMI statements if property was financed",
+      "mandatory": false,
+      "acceptable_formats": ["bank_issued"],
+      "notes": "Supports claim for additional compensation for financial hardship during delay.",
+      "legal_basis": "Compensation claim — consequential damages",
+      "how_to_obtain": "Request from lending bank — loan account statement and sanction letter."
+    }
+  ],
+  "mandatory_count": 7,
+  "optional_count": 3,
+  "total_documents": 10
+}

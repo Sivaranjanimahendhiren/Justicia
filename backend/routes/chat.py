@@ -3,7 +3,7 @@
 """
 import uuid
 import time
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from backend.agent.controller import run_agent
@@ -49,7 +49,10 @@ def chat(req: ChatRequest, db: Session = Depends(get_db)):
     db.commit()
 
     # Run agent
-    result = run_agent(req.query)
+    try:
+        result = run_agent(req.query)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Agent error: {str(e)}")
 
     duration_ms = int((time.time() - start) * 1000)
 

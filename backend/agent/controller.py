@@ -7,7 +7,7 @@ from typing import Dict, Any
 from .domain_guard import is_legal_query, detect_category, OUT_OF_SCOPE_RESPONSE
 from .planner import plan_tools
 from .executor import execute_plan, MAX_REPLAN_ATTEMPTS
-from rag.vector_store import retrieve
+from backend.rag.vector_store import retrieve
 
 # ── Category-specific context builders ───────────────────────────────────────
 

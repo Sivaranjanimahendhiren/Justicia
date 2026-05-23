@@ -23,17 +23,17 @@ AI-powered legal assistant for Indian Real Estate Disputes under RERA Act.
 ### 2. Backend Setup
 
 ```bash
-cd justicia/backend
-cp .env.example .env
-# Edit .env — add your OPENAI_API_KEY
+cd justicia
+cp backend/.env.example backend/.env
+# Edit backend/.env — add your OPENAI_API_KEY
 
-pip install -r requirements.txt
+pip install -r backend/requirements.txt
 
 # Seed the knowledge base (run once)
-python -m rag.seed
+python -m backend.rag.seed
 
-# Start the API
-uvicorn main:app --reload --port 8000
+# Start the API (run from project root)
+uvicorn backend.main:app --reload --port 8000
 ```
 
 API docs: http://localhost:8000/docs

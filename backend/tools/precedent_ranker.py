@@ -4,7 +4,7 @@ Ranks case law precedents by relevance to the current case using RAG retrieval.
 """
 from pydantic import BaseModel
 from typing import List, Optional
-from rag.vector_store import retrieve
+from backend.rag.vector_store import retrieve
 
 
 class PrecedentRankerInput(BaseModel):

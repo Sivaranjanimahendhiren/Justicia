@@ -2,7 +2,7 @@
 Agent Executor — runs the tool plan sequentially, passing outputs as context.
 """
 from typing import List, Dict, Any
-from tools import (
+from backend.tools import (
     juris_sync, JurisSyncInput,
     fact_conflict, FactConflictInput,
     gap_detector, GapDetectorInput,
@@ -10,7 +10,7 @@ from tools import (
     ethical_guard, EthicalGuardInput,
     strategy_gen, StrategyGenInput
 )
-from tools.fact_conflict import ClientStatement, RetrievedFacts
+from backend.tools.fact_conflict import ClientStatement, RetrievedFacts
 
 
 MAX_REPLAN_ATTEMPTS = 2

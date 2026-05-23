@@ -4,7 +4,7 @@ Fetches applicable statutory rules from the knowledge base for a given legal top
 """
 from pydantic import BaseModel
 from typing import List, Optional
-from rag.vector_store import retrieve
+from backend.rag.vector_store import retrieve
 
 
 class JurisSyncInput(BaseModel):

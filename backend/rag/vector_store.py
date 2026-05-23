@@ -2,10 +2,13 @@
 ChromaDB vector store for Justicia RAG pipeline.
 Handles storage and retrieval of embedded document chunks.
 """
+import logging
 import chromadb
 from chromadb.config import Settings
 from typing import List, Dict, Any
 from .embedder import embed_texts, embed_single
+
+logger = logging.getLogger(__name__)
 
 COLLECTION_NAME = "justicia_legal_kb"
 TOP_K = 5
@@ -43,15 +46,38 @@ def store_chunks(chunks: List[Dict[str, Any]]):
 
 
 def retrieve(query: str, top_k: int = TOP_K, source_filter: str = None) -> List[Dict[str, Any]]:
-    """Retrieve top-K relevant chunks for a query."""
+    """Retrieve top-K relevant chunks for a query.
+
+    Returns an empty list (instead of crashing) when the vector store has
+    fewer documents than top_k — most commonly on a fresh deploy before
+    rag.seed has been run.
+    """
     collection = get_collection()
+    count = collection.count()
+
+    if count == 0:
+        logger.warning(
+            "[VectorStore] retrieve() called but collection is empty. "
+            "Run rag.seed to populate the knowledge base. Returning []."
+        )
+        return []
+
+    # Clamp n_results so ChromaDB never receives a value larger than the
+    # number of stored documents — it raises an exception otherwise.
+    safe_top_k = min(top_k, count)
+    if safe_top_k < top_k:
+        logger.debug(
+            "[VectorStore] Clamping n_results from %d to %d (collection size).",
+            top_k, safe_top_k,
+        )
+
     query_embedding = embed_single(query)
 
     where = {"source": source_filter} if source_filter else None
 
     results = collection.query(
         query_embeddings=[query_embedding],
-        n_results=top_k,
+        n_results=safe_top_k,
         where=where,
         include=["documents", "metadatas", "distances"]
     )

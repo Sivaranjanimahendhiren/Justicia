@@ -87,7 +87,7 @@ def execute_plan(plan: List[str], context: Dict[str, Any]) -> Dict[str, Any]:
 
             elif tool_name == "ethical_guard":
                 draft = context.get("strategy_draft")
-                draft_text = str(draft.dict()) if draft else ""
+                draft_text = str(draft.model_dump()) if draft else ""
                 out = ethical_guard(EthicalGuardInput(
                     strategy_draft=draft_text,
                     case_facts=context

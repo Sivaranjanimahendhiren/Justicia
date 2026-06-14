@@ -122,3 +122,30 @@ Queries not related to real estate / RERA return:
 > "This system handles real estate disputes under RERA only."
 
 Trigger keywords: builder, flat, possession, RERA, apartment, property, developer, allotment, delay, refund, compensation, construction, housing, real estate, plot, installment, payment, receipt, tower, project, bhk, registry, promoter
+
+## ✨ README Improvement Notes
+
+### 📌 Formatting Enhancements Needed
+- Improve heading hierarchy for better readability
+- Ensure consistent spacing between sections
+- Use proper Markdown formatting for code blocks and lists
+- Align all installation and usage steps properly
+
+### 🚀 Suggested Structure Upgrade
+- Introduction
+- Features
+- Tech Stack
+- Installation
+- Usage
+- Project Structure
+- Contribution Guidelines
+- License
+
+### 🛠️ Documentation Improvements
+- Add badges (optional): build, license, contributors
+- Add screenshots for better UI understanding
+- Standardize code blocks for commands
+
+### 🎯 Goal
+Improve onboarding experience for new contributors and users by making README more structured, readable, and professional
+

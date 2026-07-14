@@ -46,6 +46,8 @@ npm install
 npm start
 ```
 
+> **Note:** Ensure the backend API is running before starting the frontend to avoid connection errors when making API requests.
+
 Frontend: http://localhost:3000
 
 ### 4. Docker (full stack)
